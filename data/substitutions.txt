@@ -1,0 +1,63 @@
+# This file contains Eliza's substitutions.
+# It is based on the implementation here:
+#    http://www.jezuk.co.uk/cgi-bin/view/software/eliza
+#
+# All lines that begin with a hash symbol are comments, and are ignored.
+#
+# This file should have the following format:
+#   1. Each section of the file should begin with at least one blank line.
+#   2. The next line should be a regular expression for what to substitute.
+#   3. The next line should be the new text for the substitution.
+#   4. After that, there should be at least one blank.
+#
+# Regular expressions should follow the syntax here:
+#    https://github.com/google/re2/wiki/Syntax
+#
+# Eliza will try to match the regular expressions in the order they appear in
+# this file, and stop at the first match. Thus earlier ones have precedence.
+
+
+[Aa]m
+are
+
+[Ww]as
+were
+
+[Ii]'?m
+you are
+
+[Ii]
+you
+
+[Ii]'?d
+you would
+
+[Ii]'?ve
+you have
+
+[Ii]'?ll
+you will
+
+[Mm]y
+your
+
+[Aa]re
+am
+
+[Yy]ou'?ve
+I have
+
+[Yy]ou'?ll
+I will
+
+[Yy]our
+my
+
+[Yy]ours
+mine
+
+[Yy]ou
+me
+
+[Mm]e
+you
