@@ -77,9 +77,6 @@ func (me *Eliza) readresponses(path string) {
 }
 
 func (me *Eliza) analyse(userinput string) string {
-	// Remove any whitespace at the start and end of the user input.
-	// userinput = strings.TrimSpace(userinput)
-
 	// Loop through the responses, looking for a match for the user input.
 	for _, response := range me.responses {
 		if matches := response.question.FindStringSubmatch(userinput); matches != nil {
@@ -92,10 +89,15 @@ func (me *Eliza) analyse(userinput string) string {
 				// Reflect the pronouns in the captured group.
 				for _, sub := range me.substitutions {
 					match = sub.original.ReplaceAllString(match, sub.substitute)
+					// Remove any spaces at the start or end.
+					match = strings.TrimSpace(match)
 				}
 				// Replace $1 with the first reflected captured group, $2 with the second, etc.
 				answer = strings.Replace(answer, "$"+strconv.Itoa(i+1), match, -1)
 			}
+
+			// Clear any ~~ markers from the string. They prevent future matches.
+			answer = strings.Replace(answer, "~~", "", -1)
 
 			// Send the filled answer back.
 			return answer
@@ -119,7 +121,7 @@ func main() {
 		userinput = strings.Trim(userinput, "\r\n")
 
 		fmt.Println(eliza.analyse(userinput))
-		
+
 		if strings.Compare(strings.ToLower(strings.TrimSpace(userinput)), "quit") == 0 {
 			break
 		}

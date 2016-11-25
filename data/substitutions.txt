@@ -15,49 +15,54 @@
 #
 # Eliza will try to match the regular expressions in the order they appear in
 # this file, and stop at the first match. Thus earlier ones have precedence.
+#
+# Sometimes it's necessary to prevent a later regular expression replacing
+# the output of an earlier one. This is facilited by the special marker ~~.
+# After all regular expressions have been completed ~~ will be deleted from
+# the output automatically.
 
+(^| )[Ii]( |$)
+ ~~you 
 
-[Aa]m
-are
+(^| )[Yy]ou( |$)
+ ~~I 
 
-[Ww]as
-were
+ [Yy]ou were( |$)
+ ~~I ~~was 
 
-[Ii]'?m
-you are
+(^| )[Aa]m( |$)
+ ~~are  
 
-[Ii]
-you
+(^| )[Aa]re( |$)
+ ~~am 
 
-[Ii]'?d
-you would
+(^| )[Ww]as( |$)
+ ~~were 
 
-[Ii]'?ve
-you have
+(^| )[Ww]ere( |$)
+ ~~was 
 
-[Ii]'?ll
-you will
+(^| )[Ii]'?m( |$)
+ ~~you ~~are 
 
-[Mm]y
-your
+(^| )[Yy]ou( |$)
+ ~~me 
 
-[Aa]re
-am
+(^| )[Mm]y( |$)
+ ~~your
 
-[Yy]ou'?ve
-I have
+(^| )[Mm]e( |$)
+ ~~you
 
-[Yy]ou'?ll
-I will
+(^| )[Yy]ou'?ve( |$)
+ ~~I ~~have 
 
-[Yy]our
-my
+(^| )[Yy]ou'?ll( |$)
+ ~~I ~~will 
 
-[Yy]ours
-mine
+(^| )[Yy]our( |$)
+ ~~my 
 
-[Yy]ou
-me
+(^| )[Yy]ours 
+ ~~mine 
 
-[Mm]e
-you
