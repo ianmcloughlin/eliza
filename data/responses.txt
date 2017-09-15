@@ -14,7 +14,7 @@
 # Regular expressions should follow the syntax here:
 #    https://github.com/google/re2/wiki/Syntax
 #
-# In the regular expressions, anything in paraentheses is captured and
+# In the regular expressions, anything in parentheses is captured and
 # available in the responses as $n where $n is the n^th captured group.
 # Thus $1 is the first captured group, and $4 is the fourth.
 #

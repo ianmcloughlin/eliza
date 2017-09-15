@@ -29,7 +29,7 @@ type response struct {
 	answers  []string
 }
 
-// A data structure representing Eliza.
+// Eliza is a data structure representing a psychoanalyst.
 // responses is an array containing elements of type response, as above.
 // Likewise, substitutions is an array containing elements of type substitution.
 // The order of the elements in both arrays matters - the responses and substitutions are matched in order.
@@ -68,19 +68,19 @@ func (me *Eliza) readsubstitutions(path string) {
 
 		// Decide what to do with the line.
 		switch {
-			// If the line is blank or starts with a # character then skip it.
-			case strings.HasPrefix(s, "#") || len(s) == 0:
-				// Do nothing
+		// If the line is blank or starts with a # character then skip it.
+		case strings.HasPrefix(s, "#") || len(s) == 0:
+			// Do nothing
 
-			// If we haven't read the original, then append an element to the substitutions array.
-			// The regualr expression is compiled, and the substitution is left blank for now.
-			case readoriginal == false:
-				me.substitutions = append(me.substitutions, substitution{original: regexp.MustCompile(s)})
-				readoriginal = true
-			// Otherwise read the substitution and assign it to the last element of the substitutions array.
-			default:
-				me.substitutions[len(me.substitutions)-1].substitute = s
-				readoriginal = false
+		// If we haven't read the original, then append an element to the substitutions array.
+		// The regualr expression is compiled, and the substitution is left blank for now.
+		case readoriginal == false:
+			me.substitutions = append(me.substitutions, substitution{original: regexp.MustCompile(s)})
+			readoriginal = true
+		// Otherwise read the substitution and assign it to the last element of the substitutions array.
+		default:
+			me.substitutions[len(me.substitutions)-1].substitute = s
+			readoriginal = false
 		}
 	}
 }
@@ -96,31 +96,43 @@ func (me *Eliza) readsubstitutions(path string) {
 //   After the responses, there should be at least one blank.
 // An example responses file is given in data/responses.txt.
 func (me *Eliza) readresponses(path string) {
+	// Open the file, and quit on an error.
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Set up a buffer to read the file, line by line.
 	scanner := bufio.NewScanner(bufio.NewReader(file))
 	scanner.Split(bufio.ScanLines)
 
+	// Loop through the lines of the file, initialising a flag called newsection to true.
 	for newsection := true; scanner.Scan(); {
+		// Get the next line of the file, assign it to s.
 		s := scanner.Text()
 
+		// Decide what to do, based on the following rules.
+		// Note that without a condition, switch in Go if just like if-else.
+		// Also, the clauses break automatically.
 		switch {
+		// Do nothing if the line is a comment (begins with #).
 		case strings.HasPrefix(s, "#"):
-			// Do nothing
+		// If the line is blank, presume we are starting a new section.
 		case len(s) == 0:
 			newsection = true
+		// If newsection is true then create a new response item with the line as a question.
+		// Then set newsection to false.
 		case newsection == true:
 			me.responses = append(me.responses, response{question: regexp.MustCompile(s)})
 			newsection = false
+		// Otherwise we're just reading a possible response, adding it to the last response item.
 		default:
 			me.responses[len(me.responses)-1].answers = append(me.responses[len(me.responses)-1].answers, s)
 		}
 	}
 }
 
+// This function accepts a user input, and gives a response as Eliza.
 func (me *Eliza) analyse(userinput string) string {
 	// Loop through the responses, looking for a match for the user input.
 	for _, response := range me.responses {
@@ -152,21 +164,33 @@ func (me *Eliza) analyse(userinput string) string {
 	return "I don't know what to say."
 }
 
+// Program entry point.
 func main() {
+	// Create a new instance of Eliza.
 	eliza := Eliza{}
 
+	// Read the substitutions file.
 	eliza.readsubstitutions("data/substitutions.txt")
+	// Read the responses file.
 	eliza.readresponses("data/responses.txt")
 
+	// Print a greeting to the user.
 	fmt.Println("Hello, I'm Eliza. How are you feeling today?")
 
+	// Keep reading user input and printing Eliza's response until the user types 'quit'.
 	for reader := bufio.NewReader(os.Stdin); ; {
+		// Print user prompt.
 		fmt.Print("> ")
+		// Read user input.
 		userinput, _ := reader.ReadString('\n')
+		// Trim the user input's end of line characters.
 		userinput = strings.Trim(userinput, "\r\n")
 
+		// Generate and print Eliza's response.
 		fmt.Println(eliza.analyse(userinput))
 
+		// If the user input was quit, then quit.
+		// Note that Eliza gets to respond to quit before this happens.
 		if strings.Compare(strings.ToLower(strings.TrimSpace(userinput)), "quit") == 0 {
 			break
 		}

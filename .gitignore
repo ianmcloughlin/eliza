@@ -1,5 +1,5 @@
 eliza
-eliza.exe
+*.exe
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

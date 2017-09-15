@@ -17,7 +17,7 @@
 # this file, and stop at the first match. Thus earlier ones have precedence.
 #
 # Sometimes it's necessary to prevent a later regular expression replacing
-# the output of an earlier one. This is facilited by the special marker ~~.
+# the output of an earlier one. This is facilitated by the special marker ~~.
 # After all regular expressions have been completed ~~ will be deleted from
 # the output automatically.
 
