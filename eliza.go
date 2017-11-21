@@ -11,187 +11,118 @@ import (
 	"strings"
 )
 
-// A data structure representing a term that should be replaced in a string.
-// original is a regular expression to be matched, and substitute is a string to replace the match with.
-// An example use is to replace the word you with the word me.
-type substitution struct {
-	original   *regexp.Regexp
-	substitute string
-}
-
-// A data structure representing a user input and a list of responses to it that Eliza can give.
-// question is a regular expression representing the user input.
-// answers is an array of strings, any of which is a reasonable response to question.
-// question can capture groups of characters, and elements of answers can use them.
-// $1 is the first match, $2 the second, etc.
-type response struct {
-	question *regexp.Regexp
-	answers  []string
+// Replacer is a data structure with two elements: a compiled regular expression as per the regexp package
+// and an array of strings containing possible replacements for a string mathcing the regular expression.
+type Replacer struct {
+	original     *regexp.Regexp
+	replacements []string
 }
 
 // Eliza is a data structure representing a psychoanalyst.
-// responses is an array containing elements of type response, as above.
-// Likewise, substitutions is an array containing elements of type substitution.
+// responses and substitutions are arrays of Replacers.
 // The order of the elements in both arrays matters - the responses and substitutions are matched in order.
 type Eliza struct {
-	responses     []response
-	substitutions []substitution
+	responses     []Replacer
+	substitutions []Replacer
 }
 
-// Method to read in a text file containing substitutions data.
-// It takes a single argument, a string, which is the path to the substitutions data file.
+// ReadReplacersFromFile reads an array of Replacers from a text file.
+// It takes a single argument, a string which is the path to the data file.
 // The file should have the following format:
 //   All lines that begin with a hash symbol are comments, and are ignored.
 //   Each section of the file should begin with at least one blank line.
-//   The next line should be a regular expression for what to substitute.
-//   The next line should be the new text for the substitution.
-//   After that, there should be at least one blank.
-// An example substitutions file is given in data/substitutions.txt.
-func (me *Eliza) readsubstitutions(path string) {
-
-	// Open the file, logging a fatal error if it fails.
+//   The next line should be a regular expression.
+//   Each subsequent line, until a blank line, should contain a possible
+//   replacement for a string matching the regular expression.
+func ReadReplacersFromFile(path string) []Replacer {
+	// Open the file, logging a fatal error if it fails, close on return.
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 
-	// Set up a line-by-line scanner for the file.
-	scanner := bufio.NewScanner(bufio.NewReader(file))
-	scanner.Split(bufio.ScanLines)
+	// Create an empty array of Replacers.
+	replacers := []Replacer{}
 
-	// Read through the file line by line.
-	// readoriginal is false if we have not yet read the regular expression to match.
-	// It is true if we have read the regular expression, and are now looking for the substitution string.
-	for readoriginal := false; scanner.Scan(); {
-		// Get the text on the current line.
-		s := scanner.Text()
-
+	// Read in the file, adding Replacers to the array.
+	for scanner, readoriginal := bufio.NewScanner(file), false; scanner.Scan(); {
 		// Decide what to do with the line.
-		switch {
+		switch line := scanner.Text(); {
 		// If the line is blank or starts with a # character then skip it.
-		case strings.HasPrefix(s, "#") || len(s) == 0:
+		case strings.HasPrefix(line, "#") || len(line) == 0:
 			// Do nothing
-
-		// If we haven't read the original, then append an element to the substitutions array.
+			// If we haven't read the original, then append an element to the substitutions array.
 		// The regualr expression is compiled, and the substitution is left blank for now.
 		case readoriginal == false:
-			me.substitutions = append(me.substitutions, substitution{original: regexp.MustCompile(s)})
+			replacers = append(replacers, Replacer{original: regexp.MustCompile(line)})
 			readoriginal = true
 		// Otherwise read the substitution and assign it to the last element of the substitutions array.
 		default:
-			me.substitutions[len(me.substitutions)-1].substitute = s
+			replacers[len(replacers)-1].replacements = append(replacers[len(replacers)-1].replacements, line)
 			readoriginal = false
 		}
 	}
+
+	return replacers
 }
 
-// Function to read in a text file containing responses data.
-// The file should have the following format:
-// All lines that begin with a hash symbol are comments, and are ignored.
-// This file should have the following format:
-//   Each section of the file should begin with at least one blank line.
-//   The next line should be a regular expression, matching a user input.
-//   Each subsequent line, until a blank line, should contain a response to
-//   the usr input. One of these will be chosen at random upon user input.
-//   After the responses, there should be at least one blank.
-// An example responses file is given in data/responses.txt.
-func (me *Eliza) readresponses(path string) {
-	// Open the file, and quit on an error.
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
+// ElizaFromFiles reads in text files containing responses and substitutions data.
+func ElizaFromFiles(responsePath string, substitutionPath string) Eliza {
+	eliza := Eliza{}
 
-	// Set up a buffer to read the file, line by line.
-	scanner := bufio.NewScanner(bufio.NewReader(file))
-	scanner.Split(bufio.ScanLines)
+	eliza.responses = ReadReplacersFromFile(responsePath)
+	eliza.substitutions = ReadReplacersFromFile(substitutionPath)
 
-	// Loop through the lines of the file, initialising a flag called newsection to true.
-	for newsection := true; scanner.Scan(); {
-		// Get the next line of the file, assign it to s.
-		s := scanner.Text()
-
-		// Decide what to do, based on the following rules.
-		// Note that without a condition, switch in Go if just like if-else.
-		// Also, the clauses break automatically.
-		switch {
-		// Do nothing if the line is a comment (begins with #).
-		case strings.HasPrefix(s, "#"):
-		// If the line is blank, presume we are starting a new section.
-		case len(s) == 0:
-			newsection = true
-		// If newsection is true then create a new response item with the line as a question.
-		// Then set newsection to false.
-		case newsection == true:
-			me.responses = append(me.responses, response{question: regexp.MustCompile(s)})
-			newsection = false
-		// Otherwise we're just reading a possible response, adding it to the last response item.
-		default:
-			me.responses[len(me.responses)-1].answers = append(me.responses[len(me.responses)-1].answers, s)
-		}
-	}
+	return eliza
 }
 
-// This function accepts a user input, and gives a response as Eliza.
-func (me *Eliza) analyse(userinput string) string {
-	// Loop through the responses, looking for a match for the user input.
+// RespondTo take a string as input and returns a string containing what Eliza says when given that string as input.
+func (me *Eliza) RespondTo(input string) string {
+	// Look for a possible response.
 	for _, response := range me.responses {
-		if matches := response.question.FindStringSubmatch(userinput); matches != nil {
-
+		// Check if the user input matches the original, capturing any groups.
+		if matches := response.original.FindStringSubmatch(input); matches != nil {
 			// Select a random answer.
-			answer := response.answers[rand.Intn(len(response.answers))]
-
+			output := response.replacements[rand.Intn(len(response.replacements))]
+			// We'll tokenise the captured groups using the following regular expression.
+			boundaries := regexp.MustCompile(`\b`)
 			// Fill the answer with the captured groups from the matches.
-			for i, match := range matches[1:] {
-				// Reflect the pronouns in the captured group.
-				for _, sub := range me.substitutions {
-					match = sub.original.ReplaceAllString(match, sub.substitute)
-					// Remove any spaces at the start or end.
-					match = strings.TrimSpace(match)
+			for m, match := range matches[1:] {
+				// Split the captured group into tokens.
+				tokens := boundaries.Split(match, -1)
+				// Loop through the tokens.
+				for t, token := range tokens {
+					// If the token matches a substitution, then substitute it and break.
+					for _, substitution := range me.substitutions {
+						if substitution.original.MatchString(token) {
+							tokens[t] = substitution.replacements[rand.Intn(len(substitution.replacements))]
+							break
+						}
+					}
+					output = strings.Replace(output, "$"+strconv.Itoa(m+1), strings.Join(tokens, ""), -1)
 				}
-				// Replace $1 with the first reflected captured group, $2 with the second, etc.
-				answer = strings.Replace(answer, "$"+strconv.Itoa(i+1), match, -1)
 			}
-
-			// Clear any ~~ markers from the string. They prevent future matches.
-			answer = strings.Replace(answer, "~~", "", -1)
-
 			// Send the filled answer back.
-			return answer
+			return output
 		}
 	}
-
+	// If there are no matches, then return this generic phrase.
 	return "I don't know what to say."
 }
 
 // Program entry point.
 func main() {
 	// Create a new instance of Eliza.
-	eliza := Eliza{}
-
-	// Read the substitutions file.
-	eliza.readsubstitutions("data/substitutions.txt")
-	// Read the responses file.
-	eliza.readresponses("data/responses.txt")
+	eliza := ElizaFromFiles("data/responses.txt", "data/substitutions.txt")
 
 	// Print a greeting to the user.
-	fmt.Println("Hello, I'm Eliza. How are you feeling today?")
-
-	// Keep reading user input and printing Eliza's response until the user types 'quit'.
-	for reader := bufio.NewReader(os.Stdin); ; {
-		// Print user prompt.
-		fmt.Print("> ")
-		// Read user input.
-		userinput, _ := reader.ReadString('\n')
-		// Trim the user input's end of line characters.
-		userinput = strings.Trim(userinput, "\r\n")
-
-		// Generate and print Eliza's response.
-		fmt.Println(eliza.analyse(userinput))
-
-		// If the user input was quit, then quit.
-		// Note that Eliza gets to respond to quit before this happens.
-		if strings.Compare(strings.ToLower(strings.TrimSpace(userinput)), "quit") == 0 {
+	fmt.Println("Eliza: Hello, I'm Eliza. How are you feeling today?")
+	// Read from the user.
+	scanner := bufio.NewScanner(os.Stdin)
+	for fmt.Print("You: "); scanner.Scan(); fmt.Print("You: ") {
+		fmt.Println("Eliza: ", eliza.RespondTo(scanner.Text()))
+		if strings.Compare(strings.ToLower(strings.TrimSpace(scanner.Text())), "quit") == 0 {
 			break
 		}
 	}
