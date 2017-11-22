@@ -23,32 +23,32 @@
 
 
 # e.g. I need help.
-(?im)^\s*I need ([^.!?]*)[.!?]*\s*$
+(?i)^\s*I need ([^.!?]*)[.!?]*\s*$
 Why do you need $1?
 Would it really help you to get $1?
 Are you sure you need $1?
 
 # e.g. Why don't you answer me?
-(?im)^\s*Why don'?t you ([^.!?]*)[.!?\s]*$
+(?i)^\s*Why don'?t you ([^.!?]*)[.!?\s]*$
 Do you really think I don't $1?
 Perhaps eventually I will $1.
 Do you really want me to $1?
 
 # e.g. Why can't I help myself?
-(?im)^\s*Why can'?t I ([^.!?]*)[.!?\s]*$
+(?i)^\s*Why can'?t I ([^.!?]*)[.!?\s]*$
 Do you think you should be able to $1?
 If you could $1, what would you do?
 I don't know - why can't you $1?
 Have you really tried?
 
 # e.g. I can't cry
-(?im)^\s*I can'?t ([^.!?]*)[.!?\s]*$
+(?i)^\s*I can'?t ([^.!?]*)[.!?\s]*$
 How do you know you can't $1?
 Perhaps you could $1 if you tried.
 What would it take for you to $1?
 
 # e.g. I am sad
-(?im)^\s*(?:I am|I'm) ([^.!?]*)[.!?\s]*$
+(?i)^\s*(?:I am|I'm) ([^.!?]*)[.!?\s]*$
 Did you come to me because you are $1?
 How long have you been $1?
 How do you feel about being $1?
@@ -58,69 +58,69 @@ Why do you say that you're $1?
 Why do you think you're $1?
 
 # e.g. Are you a psychiatrist?
-(?im)^\s*Are you\b([^.!?]*)[.!?\s]*$
+(?i)^\s*Are you\b([^.!?]*)[.!?\s]*$
 Why does it matter whether I am $1?
 Would you prefer it if I were not $1?
 Perhaps you believe I am $1.
 I may be $1 -- what do you think?
 
 # e.g. What day is it?
-(?im)^\s*What ([^.!?]*)[.!?\s]*$
+(?i)^\s*What ([^.!?]*)[.!?\s]*$
 Why do you ask?
 How would an answer to that help you?
 What do you think?
 
 # e.g. How are you?
-(?im)^\s*How .*$
+(?i)^\s*How .*$
 How do you suppose?
 Perhaps you can answer your own question.
 What is it you're really asking?
 
 # e.g. Because I'm young.
-(?im)^\s*Because ([^.!?]*)[.!?\s]*$
+(?i)^\s*Because ([^.!?]*)[.!?\s]*$
 Is that the real reason?
 What other reasons come to mind?
 Does that reason apply to anything else?
 If $1, what else must be true?
 
 # e.g. If I offended you, I'm sorry.
-(?im)^.*\bsorry\b.*$
+(?i)^.*\bsorry\b.*$
 There are many times when no apology is needed.
 What feelings do you have when you apologize?
 
 # e.g. Hello Eliza!
-(?im)^\s*Hello.*$
+(?i)^\s*Hello.*$
 Hello, I'm glad we have a chance to chat.
 Hi there, how are you today?
 Hello, how are you feeling today?
 Alright, mate?
 
 # e.g. I think I'm lonely
-(?im)^\s*I think ([^.!?]*)[.!?\s]*$
+(?i)^\s*I think ([^.!?]*)[.!?\s]*$
 Do you doubt $1?
 Do you really think so?
 But you're not sure $1?
 
 # e.g. My friend isn't helpful
-(?im)^.*friend.*$
+(?i)^.*friend.*$
 Tell me more about your friends.
 When you think of a friend, what comes to mind?
 Did you have many childhood friends?
 
 # e.g. Yes
-(?im)^\s*Yes\s*$
+(?i)^\s*Yes\s*$
 You seem quite sure.
 OK, but can you elaborate a bit?
 Can you tell me why?
 
 # e.g. No
-(?im)^\s*No\s*$
+(?i)^\s*No\s*$
 You'll have to elaborate.
 Definitely no?
 Can you tell me why not?
 
 # e.g. You're just a computer program.
-(?im)^.*\bcomputer\b.*$
+(?i)^.*\bcomputer\b.*$
 Are you really talking about the computer?
 Does it seem strange to talk on a computer?
 Do you like computers?
@@ -128,31 +128,31 @@ How do computers make you feel?
 Do you feel threatened by computers?
 
 # e.g. Is it important to feel sad?
-(?im)^\s*Is it ([^.!?]*)[.!?\s]*$
+(?i)^\s*Is it ([^.!?]*)[.!?\s]*$
 Do you think it is $1?
 Perhaps it's $1 - what do you think?
 If it were important to $1, what would you do?
 How would you tell if it's important to $1.
 
 # e.g. It is obvious
-(?im)^\s*It is ([^.!?]*)[.!?\s]*$
+(?i)^\s*It is ([^.!?]*)[.!?\s]*$
 You seem very certain.
 If I told you that it probably isn't $1, how would you feel?
 
 # e.g. Can you help me?
-(?im)^\s*Can you ([^.!?]*)[.!?\s]*$
+(?i)^\s*Can you ([^.!?]*)[.!?\s]*$
 What makes you think I can't $1?
 If I could $1, then what?
 Why do you ask if I can $1?
 
 # e.g. Can I tell you something?
-(?im)^\s*Can I ([^.!?]*)[.!?\s]*$
+(?i)^\s*Can I ([^.!?]*)[.!?\s]*$
 Perhaps you don't want to $1.
 Do you want to be able to $1?
 If you could $1, would you?
 
 # e.g. You are nice!
-(?im)^\s*(?:You are|You're) ([^.!?]*)[.!?\s]*$
+(?i)^\s*(?:You are|You're) ([^.!?]*)[.!?\s]*$
 Why do you think I am $1?
 Does it please you to think that I'm $1?
 Perhaps you would like me to be $1.
@@ -162,69 +162,69 @@ Why do you think I am $1?
 Are we talking about you, or me?
 
 # e.g. I don't care
-(?im)^\s*I don't ([^.!?]*)[.!?\s]*$
+(?i)^\s*I don't ([^.!?]*)[.!?\s]*$
 Don't you really $1?
 Why don't you $1?
 Do you want to $1?
 Do some people $1?
 
 # e.g. I feel strange
-(?im)^\s*I feel ([^.!?]*)[.!?\s]*$
+(?i)^\s*I feel ([^.!?]*)[.!?\s]*$
 Good, tell me more about these feelings.
 Do you often feel $1?
 When do you usually feel $1?
 When you feel $1, what do you do?
 
 # e.g. I have lots of friends
-(?im)^\s*I have ([^.!?]*)[.!?\s]*$
+(?i)^\s*I have ([^.!?]*)[.!?\s]*$
 Why do you tell me that you've $1?
 Have you really $1?
 Now that you have $1, what will you do next?
 
 # e.g. I would say so
-(?im)^\s*I would ([^.!?]*)[.!?\s]*$
+(?i)^\s*I would ([^.!?]*)[.!?\s]*$
 Could you explain why you would $1?
 Why would you $1?
 Who else knows that you would $1?
 
 # e.g. Is there a God?
-(?im)^\s*Is there ([^.!?]*)[.!?\s]*$
+(?i)^\s*Is there ([^.!?]*)[.!?\s]*$
 Do you think there is $1?
 It's likely that there is $1.
 Would you like there to be $1?
 
 # e.g. Are there any good people left?
-(?im)^\s*Are there ([^.!?]*)[.!?\s]*$
+(?i)^\s*Are there ([^.!?]*)[.!?\s]*$
 Do you think there are $1?
 It's likely that there are $1.
 Would you like there to be $1?
 
 # e.g. My dog barks at me
-(?im)^\s*My ([^.!?]*)[.!?\s]*$
+(?i)^\s*My ([^.!?]*)[.!?\s]*$
 I see, your $1. Why, I wonder?
 Why do you say that your $1?
 When your $1, how do you feel?
 
 # e.g. You don't answer my questions
-(?im)^\s*You ([^.!?]*)[.!?\s]*$
+(?i)^\s*You ([^.!?]*)[.!?\s]*$
 We should be discussing you, not me.
 Why do you say that about me?
 Why do you care whether I $1?
 
 # e.g. Why is the sky blue?
-(?im)^\s*Why ([^.!?]*)[.!?\s]*$
+(?i)^\s*Why ([^.!?]*)[.!?\s]*$
 Why don't you tell me the reason why $1?
 Why do you think $1?
 
 # e.g. I want comfort
-(?im)^\s*I want ([^.!?]*)[.!?\s]*$
+(?i)^\s*I want ([^.!?]*)[.!?\s]*$
 What would it mean to you if you got $1?
 Why do you want $1?
 What would you do if you got $1?
 If you got $1, then what would you do?
 
 # e.g. My mother doesn't care.
-(?im)^.*\bmother\b.*$
+(?i)^.*\bmother\b.*$
 Tell me more about your mother.
 What was your relationship with your mother like?
 How do you feel about your mother?
@@ -232,7 +232,7 @@ How does this relate to your feelings today?
 Good family relations are important.
 
 # e.g. My father is a doctor.
-(?im)^.*\bfather\b.*$
+(?i)^.*\bfather\b.*$
 Tell me more about your father.
 How did your father make you feel?
 How do you feel about your father?
@@ -240,7 +240,7 @@ Does your relationship with your father relate to your feelings today?
 Do you have trouble showing affection with your family?
 
 # e.g. I had a tough childhood.
-(?im)^.*child.*$
+(?i)^.*child.*$
 Did you have close friends as a child?
 What is your favourite childhood memory?
 Do you remember any dreams or nightmares from childhood?
@@ -248,7 +248,7 @@ Did the other children sometimes tease you?
 How do you think your childhood experiences relate to your feelings today?
 
 # e.g. quit
-(?im)^\s*quit\s*$
+(?i)^\s*quit\s*$
 Thank you for talking with me.
 I hope we can chat again soon.
 Thank you, that will be $150. Have a good day!
