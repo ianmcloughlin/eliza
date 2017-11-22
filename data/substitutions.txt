@@ -6,9 +6,10 @@
 #
 # This file should have the following format:
 #   1. Each section of the file should begin with at least one blank line.
-#   2. The next line should be a regular expression for what to substitute.
-#   3. The next line should be the new text for the substitution.
-#   4. After that, there should be at least one blank.
+#   2. The next line should be a regular expression, matching a token.
+#   3. Each subsequent line, until a blank line, should contain a replacement
+#      for the token. One of these will be chosen at random.
+#   4. After the replacements, there should be at least one blank.
 #
 # Regular expressions should follow the syntax here:
 #    https://github.com/google/re2/wiki/Syntax
@@ -16,52 +17,48 @@
 # Eliza will try to match the regular expressions in the order they appear in
 # this file, and stop at the first match. Thus earlier ones have precedence.
 #
-# Sometimes it's necessary to prevent a later regular expression replacing
-# the output of an earlier one. This is facilitated by the special marker ~~.
-# After all regular expressions have been completed ~~ will be deleted from
-# the output automatically.
 
 (^| )[Ii]( |$)
- ~~you 
+you
 
 (^| )[Yy]ou( |$)
- ~~I 
+I
 
- [Yy]ou were( |$)
- ~~I ~~was 
+[Yy]ou were( |$)
+I was
 
 (^| )[Aa]m( |$)
- ~~are  
+are
 
 (^| )[Aa]re( |$)
- ~~am 
+am
 
 (^| )[Ww]as( |$)
- ~~were 
+were
 
 (^| )[Ww]ere( |$)
- ~~was 
+was
 
 (^| )[Ii]'?m( |$)
- ~~you ~~are 
+you are
 
 (^| )[Yy]ou( |$)
- ~~me 
+me
 
 (^| )[Mm]y( |$)
- ~~your
+your
 
 (^| )[Mm]e( |$)
- ~~you
+you
 
 (^| )[Yy]ou'?ve( |$)
- ~~I ~~have 
+I have
 
 (^| )[Yy]ou'?ll( |$)
- ~~I ~~will 
+I will
 
 (^| )[Yy]our( |$)
- ~~my 
+my
 
-(^| )[Yy]ours 
- ~~mine 
+(^| )[Yy]ours
+mine

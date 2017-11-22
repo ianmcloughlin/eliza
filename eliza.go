@@ -104,17 +104,20 @@ func (me *Eliza) RespondTo(input string) string {
 				tokens := boundaries.Split(match, -1)
 				// Loop through the tokens.
 				for t, token := range tokens {
-					// If the token matches a substitution, then substitute it and break.
+					// Loop through the potential substitutions.
 					for _, substitution := range me.substitutions {
+						// Check if the original of the current substitution matches the token.
 						if substitution.original.MatchString(token) {
+							// If it matches, replace the token with one of the replacements (at random).
+							// Then break.
 							tokens[t] = substitution.replacements[rand.Intn(len(substitution.replacements))]
 							break
 						}
 					}
-					// Replace $1 with the first match, $2 with the second, etc.
-					// Note that element 0 of matches is the original match, not a captured group.
-					output = strings.Replace(output, "$"+strconv.Itoa(m+1), strings.Join(tokens, ""), -1)
 				}
+				// Replace $1 with the first match, $2 with the second, etc.
+				// Note that element 0 of matches is the original match, not a captured group.
+				output = strings.Replace(output, "$"+strconv.Itoa(m+1), strings.Join(tokens, ""), -1)
 			}
 			// Send the filled answer back.
 			return output

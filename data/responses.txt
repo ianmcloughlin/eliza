@@ -8,7 +8,7 @@
 #   1. Each section of the file should begin with at least one blank line.
 #   2. The next line should be a regular expression, matching a user input.
 #   3. Each subsequent line, until a blank line, should contain a response to
-#      the usr input. One of these will be chosen at random upon user input.
+#      the user input. One of these will be chosen at random upon user input.
 #   4. After the responses, there should be at least one blank.
 #
 # Regular expressions should follow the syntax here:
