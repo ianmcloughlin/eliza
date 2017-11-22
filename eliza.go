@@ -11,29 +11,25 @@ import (
 	"strings"
 )
 
-// Replacer is a data structure with two elements: a compiled regular expression as per the regexp package
-// and an array of strings containing possible replacements for a string mathcing the regular expression.
+// Replacer is a structe with two elements: a compiled regular expression,
+// as per the regexp package, and an array of strings containing possible
+// replacements for a string mathcing the regular expression.
 type Replacer struct {
 	original     *regexp.Regexp
 	replacements []string
 }
 
-// Eliza is a data structure representing a psychoanalyst.
-// responses and substitutions are arrays of Replacers.
-// The order of the elements in both arrays matters - the responses and substitutions are matched in order.
-type Eliza struct {
-	responses     []Replacer
-	substitutions []Replacer
-}
-
 // ReadReplacersFromFile reads an array of Replacers from a text file.
-// It takes a single argument, a string which is the path to the data file.
-// The file should have the following format:
-//   All lines that begin with a hash symbol are comments, and are ignored.
-//   Each section of the file should begin with at least one blank line.
-//   The next line should be a regular expression.
+// It takes a single argument: a string which is the path to the data file.
+// The file should be a series of sections with the following format:
+//   All lines that begin with a hash symbol are ignored.
+//   Each section should begin with a regular expression on a single line.
 //   Each subsequent line, until a blank line, should contain a possible
 //   replacement for a string matching the regular expression.
+//   Each section should end with at least one blank line.
+// The idea is to create an array that can be traversed, looking for the first
+// regular expression to match some input string. Once a match is found, a
+// random replacement string is returned.
 func ReadReplacersFromFile(path string) []Replacer {
 	// Open the file, logging a fatal error if it fails, close on return.
 	file, err := os.Open(path)
@@ -43,34 +39,44 @@ func ReadReplacersFromFile(path string) []Replacer {
 	defer file.Close()
 
 	// Create an empty array of Replacers.
-	replacers := []Replacer{}
+	var replacers []Replacer
 
-	// Read in the file, adding Replacers to the array.
+	// Read the file line by line.
 	for scanner, readoriginal := bufio.NewScanner(file), false; scanner.Scan(); {
-		// Decide what to do with the line.
+		// Read the next line and decide what to do.
 		switch line := scanner.Text(); {
 		// If the line starts with a # character then skip it.
 		case strings.HasPrefix(line, "#"):
 			// Do nothing
-		// If we see a blank line, then just make sure we indicate a new section.
+		// If we see a blank line, then make sure we indicate a new section.
 		case len(line) == 0:
 			readoriginal = false
-		// If we haven't read the original, then append an element to the substitutions array.
-		// The regualr expression is compiled, and the substitution is left blank for now.
+		// If we haven't read the original, then append an element to the
+		// replacers array, compiling the regular expression. The replacements
+		// array is left blank for now.
 		case readoriginal == false:
 			replacers = append(replacers, Replacer{original: regexp.MustCompile(line)})
 			readoriginal = true
-		// Otherwise read the substitution and assign it to the last element of the substitutions array.
+		// Otherwise read a replacement and add it to the last replacer.
 		default:
 			replacers[len(replacers)-1].replacements = append(replacers[len(replacers)-1].replacements, line)
 
 		}
 	}
-
+	// Return the replacers array.
 	return replacers
 }
 
-// ElizaFromFiles reads in text files containing responses and substitutions data.
+// Eliza is a data structure representing a chatbot.
+// The fields responses and substitutions are arrays of Replacers.
+// Eliza will attempt matches from start to end of each array.
+type Eliza struct {
+	responses     []Replacer
+	substitutions []Replacer
+}
+
+// ElizaFromFiles reads in text files containing responses and substitutions
+// data and returns an instance of Eliza with these loaded in.
 func ElizaFromFiles(responsePath string, substitutionPath string) Eliza {
 	eliza := Eliza{}
 
@@ -80,19 +86,21 @@ func ElizaFromFiles(responsePath string, substitutionPath string) Eliza {
 	return eliza
 }
 
-// RespondTo take a string as input and returns a string containing what Eliza says when given that string as input.
+// RespondTo takes a string as input and returns a string. The returned string
+// contains the chatbot's response to the input.
 func (me *Eliza) RespondTo(input string) string {
 	// Look for a possible response.
 	for _, response := range me.responses {
 		// Check if the user input matches the original, capturing any groups.
 		if matches := response.original.FindStringSubmatch(input); matches != nil {
-			// Select a random answer.
+			// Select a random response.
 			output := response.replacements[rand.Intn(len(response.replacements))]
 			// We'll tokenise the captured groups using the following regular expression.
 			boundaries := regexp.MustCompile(`\b`)
-			// Fill the answer with the captured groups from the matches.
+			// Fill the response with each captured group from the input.
+			// This is a bit complex, because we have to reflect the pronouns.
 			for m, match := range matches[1:] {
-				// Split the captured group into tokens.
+				// First split the captured group into tokens.
 				tokens := boundaries.Split(match, -1)
 				// Loop through the tokens.
 				for t, token := range tokens {
@@ -103,6 +111,8 @@ func (me *Eliza) RespondTo(input string) string {
 							break
 						}
 					}
+					// Replace $1 with the first match, $2 with the second, etc.
+					// Note that element 0 of matches is the original match, not a captured group.
 					output = strings.Replace(output, "$"+strconv.Itoa(m+1), strings.Join(tokens, ""), -1)
 				}
 			}
@@ -110,7 +120,7 @@ func (me *Eliza) RespondTo(input string) string {
 			return output
 		}
 	}
-	// If there are no matches, then return this generic phrase.
+	// If there are no matches, then return this generic response.
 	return "I don't know what to say."
 }
 
@@ -124,8 +134,10 @@ func main() {
 	// Read from the user.
 	scanner := bufio.NewScanner(os.Stdin)
 	for fmt.Print("You: "); scanner.Scan(); fmt.Print("You: ") {
+		// Print Eliza's response.
 		fmt.Println("Eliza:", eliza.RespondTo(scanner.Text()))
-		if strings.Compare(strings.ToLower(strings.TrimSpace(scanner.Text())), "quit") == 0 {
+		// If the user typed "quit" then exit. Eliza has a chance to respond first.
+		if quit, _ := regexp.MatchString("(?i)^quit$", scanner.Text()); quit {
 			break
 		}
 	}
