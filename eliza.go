@@ -61,7 +61,6 @@ func ReadReplacersFromFile(path string) []Replacer {
 		// Otherwise read a replacement and add it to the last replacer.
 		default:
 			replacers[len(replacers)-1].replacements = append(replacers[len(replacers)-1].replacements, line)
-
 		}
 	}
 	// Return the replacers array.
