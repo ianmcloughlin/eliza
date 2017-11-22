@@ -42,6 +42,9 @@ was
 (?i)^I'?m$
 you are
 
+(?i)^you'?re$
+I am
+
 (?i)^you$
 me
 
