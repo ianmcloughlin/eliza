@@ -49,10 +49,13 @@ func ReadReplacersFromFile(path string) []Replacer {
 	for scanner, readoriginal := bufio.NewScanner(file), false; scanner.Scan(); {
 		// Decide what to do with the line.
 		switch line := scanner.Text(); {
-		// If the line is blank or starts with a # character then skip it.
-		case strings.HasPrefix(line, "#") || len(line) == 0:
+		// If the line starts with a # character then skip it.
+		case strings.HasPrefix(line, "#"):
 			// Do nothing
-			// If we haven't read the original, then append an element to the substitutions array.
+		// If we see a blank line, then just make sure we indicate a new section.
+		case len(line) == 0:
+			readoriginal = false
+		// If we haven't read the original, then append an element to the substitutions array.
 		// The regualr expression is compiled, and the substitution is left blank for now.
 		case readoriginal == false:
 			replacers = append(replacers, Replacer{original: regexp.MustCompile(line)})
@@ -60,7 +63,7 @@ func ReadReplacersFromFile(path string) []Replacer {
 		// Otherwise read the substitution and assign it to the last element of the substitutions array.
 		default:
 			replacers[len(replacers)-1].replacements = append(replacers[len(replacers)-1].replacements, line)
-			readoriginal = false
+
 		}
 	}
 
@@ -121,7 +124,7 @@ func main() {
 	// Read from the user.
 	scanner := bufio.NewScanner(os.Stdin)
 	for fmt.Print("You: "); scanner.Scan(); fmt.Print("You: ") {
-		fmt.Println("Eliza: ", eliza.RespondTo(scanner.Text()))
+		fmt.Println("Eliza:", eliza.RespondTo(scanner.Text()))
 		if strings.Compare(strings.ToLower(strings.TrimSpace(scanner.Text())), "quit") == 0 {
 			break
 		}
