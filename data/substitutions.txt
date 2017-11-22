@@ -65,3 +65,9 @@ mine
 
 (?i)^myself$
 yourself
+
+(?i)^any$
+some
+
+(?i)^some$
+any

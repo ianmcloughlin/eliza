@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Replacer is a structe with two elements: a compiled regular expression,
@@ -96,7 +97,7 @@ func (me *Eliza) RespondTo(input string) string {
 			// Select a random response.
 			output := response.replacements[rand.Intn(len(response.replacements))]
 			// We'll tokenise the captured groups using the following regular expression.
-			boundaries := regexp.MustCompile(`\b`)
+			boundaries := regexp.MustCompile(`[\s,.?!]+`)
 			// Fill the response with each captured group from the input.
 			// This is a bit complex, because we have to reflect the pronouns.
 			for m, match := range matches[1:] {
@@ -117,7 +118,7 @@ func (me *Eliza) RespondTo(input string) string {
 				}
 				// Replace $1 with the first match, $2 with the second, etc.
 				// Note that element 0 of matches is the original match, not a captured group.
-				output = strings.Replace(output, "$"+strconv.Itoa(m+1), strings.Join(tokens, ""), -1)
+				output = strings.Replace(output, "$"+strconv.Itoa(m+1), strings.Join(tokens, " "), -1)
 			}
 			// Send the filled answer back.
 			return output
@@ -129,6 +130,9 @@ func (me *Eliza) RespondTo(input string) string {
 
 // Program entry point.
 func main() {
+	// Seed the rand package with the current time.
+	rand.Seed(time.Now().UnixNano())
+
 	// Create a new instance of Eliza.
 	eliza := ElizaFromFiles("data/responses.txt", "data/substitutions.txt")
 
