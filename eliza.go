@@ -12,9 +12,9 @@ import (
 	"time"
 )
 
-// Replacer is a structe with two elements: a compiled regular expression,
+// Replacer is a struct with two elements: a compiled regular expression,
 // as per the regexp package, and an array of strings containing possible
-// replacements for a string mathcing the regular expression.
+// replacements for a string matching the regular expression.
 type Replacer struct {
 	original     *regexp.Regexp
 	replacements []string
