@@ -18,47 +18,50 @@
 # this file, and stop at the first match. Thus earlier ones have precedence.
 #
 
-(^| )[Ii]( |$)
+(?i)^i$
 you
 
-(^| )[Yy]ou( |$)
+(?i)^you$
 I
 
-[Yy]ou were( |$)
-I was
-
-(^| )[Aa]m( |$)
-are
-
-(^| )[Aa]re( |$)
-am
-
-(^| )[Ww]as( |$)
-were
-
-(^| )[Ww]ere( |$)
+(?i)^were$
 was
 
-(^| )[Ii]'?m( |$)
+(?i)^am$
+are
+
+(?i)^are$
+am
+
+(?i)^was$
+were
+
+(?i)^were$
+was
+
+(?i)^I'?m$
 you are
 
-(^| )[Yy]ou( |$)
+(?i)^you$
 me
 
-(^| )[Mm]y( |$)
+(?i)^my$
 your
 
-(^| )[Mm]e( |$)
+(?i)^[Mm]e$
 you
 
-(^| )[Yy]ou'?ve( |$)
+(?i)^you'?ve$
 I have
 
-(^| )[Yy]ou'?ll( |$)
+(?i)^you'?ll$
 I will
 
-(^| )[Yy]our( |$)
+(?i)^your$
 my
 
-(^| )[Yy]ours
+(?i)^yours$
 mine
+
+(?i)^myself$
+yourself
